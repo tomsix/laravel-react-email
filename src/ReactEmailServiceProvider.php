@@ -2,6 +2,7 @@
 
 namespace Maantje\ReactEmail;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 
 class ReactEmailServiceProvider extends ServiceProvider
@@ -29,5 +30,7 @@ class ReactEmailServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../config/react-email.php', 'react-email'
         );
+
+		File::macro('relativePath', new RelativePathFinder);
     }
 }

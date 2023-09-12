@@ -2,6 +2,7 @@
 
 namespace Maantje\ReactEmail;
 
+use Illuminate\Support\Facades\File;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -12,16 +13,31 @@ class Renderer extends Process
      * @param string $view
      * @param array $data
      */
-    private function __construct(string $view, array $data = [])
-    {
-        parent::__construct([
-            (new ExecutableFinder())->find('node'),
-            base_path('/node_modules/.bin/tsx'),
-            __DIR__ .'/../render.tsx',
-            config('react-email.template_directory') . $view,
-            json_encode($data)
-        ], base_path());
-    }
+	private function __construct(string $view, array $data = [])
+	{
+		parent::__construct([
+			(new ExecutableFinder())->find('npx', 'node', [
+				'/usr/local/bin',
+				'/opt/homebrew/bin',
+			]),
+			'tsx',
+			$this->getScriptPath(),
+			$this->getViewPath($view),
+			json_encode($data),
+		], realpath(base_path()));
+	}
+
+	protected function getScriptPath(): string
+	{
+		return File::relativePath(realpath(__DIR__. '/../render.tsx'));
+	}
+
+	protected function getViewPath(string $view): string
+	{
+		$path = config('react-email.template_directory');
+
+		return File::relativePath($path, realpath(__DIR__. '/../'))  . '/' .  $view;
+	}
 
     /**
      * Calls the react-email render

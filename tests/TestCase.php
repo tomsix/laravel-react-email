@@ -18,6 +18,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function getEnvironmentSetUp($app): void
     {
-        $app->setBasePath(__DIR__ . '/..');
+        $app->setBasePath(realpath(__DIR__ . '/../'));
     }
 }
