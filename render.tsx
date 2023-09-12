@@ -1,14 +1,17 @@
 import { render } from '@react-email/render'
 import * as React from 'react';
+import * as path from "path";
 
 const [node, script, view, json] = process.argv;
-import(view).then((module) => {
+
+import(`./${path.relative(__dirname, view)}`).then((module) => {
     const Email = module.default
-    const html = render(<Email {...JSON.parse(json)} />, {
+    const data = json ? JSON.parse(json) : []
+    const html = render(<Email {...data} />, {
         pretty: true,
     });
 
-    const text = render(<Email {...JSON.parse(json)} />, {
+    const text = render(<Email {...data} />, {
         plainText: true,
     });
 
